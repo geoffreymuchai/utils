@@ -1,0 +1,35 @@
+#! /bin/bash
+set -e
+
+
+main_url=http://www.praythelord.org/nivbible
+declare book
+declare book_no
+declare no_of_chapters
+declare chapter
+while getopts ":b:c:n:m:" opt; do
+	case "$opt" in
+		b) book=$OPTARG ;;
+		n) book_no=$OPTARG ;;
+		m) no_of_chapters=$OPTARG ;;
+		c) chapter=$OPTARG ;;
+	esac
+done
+
+if [[ -z $book || -z $book_no || -z $no_of_chapters || -z $chapter ]]; then
+	echo "Required options are:"
+	echo "	-b Book"
+	echo "	-n Book Number in old or new testament"
+	echo "	-m Total number of chapters in book"
+	echo "	-c chapter number"
+	exit 1
+fi
+
+echo "Fetching from old testament audio tracks for [$book]"
+download_url="$main_url/$book_no$book$no_of_chapters/$book$chapter.mp3"
+echo "Now fetching audio book from $download_url"
+pushd "$book"
+echo "downloading from $download_url"
+wget $download_url
+popd
+echo "Done!"
