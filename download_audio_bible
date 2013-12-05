@@ -7,29 +7,47 @@ declare book
 declare book_no
 declare no_of_chapters
 declare chapter
-while getopts ":b:c:n:m:" opt; do
+declare download_url
+declare book_to_download
+while getopts ":b:n:m:" opt; do
 	case "$opt" in
 		b) book=$OPTARG ;;
 		n) book_no=$OPTARG ;;
 		m) no_of_chapters=$OPTARG ;;
-		c) chapter=$OPTARG ;;
 	esac
 done
 
-if [[ -z $book || -z $book_no || -z $no_of_chapters || -z $chapter ]]; then
+if [[ -z $book || -z $book_no || -z $no_of_chapters ]]; then
 	echo "Required options are:"
 	echo "	-b Book"
 	echo "	-n Book Number in old or new testament"
 	echo "	-m Total number of chapters in book"
-	echo "	-c chapter number"
 	exit 1
 fi
 
 echo "Fetching from old testament audio tracks for [$book]"
-download_url="$main_url/$book_no$book$no_of_chapters/$book$chapter.mp3"
-echo "Now fetching audio book from $download_url"
+if ! [[ -d $book ]]; then
+	mkdir $book
+fi
 pushd "$book"
-echo "downloading from $download_url"
-wget $download_url
+counter=1
+while [[ $counter -le $no_of_chapters ]]; do
+	chapter=$counter
+	if [[ $chapter -lt 10 ]]; then
+		book_to_download=${book}0{chapter}.mp3
+		download_url="$main_url/$book_no$book$no_of_chapters/${book}0${chapter}.mp3"
+	else
+		book_to_download=${book}{chapter}.mp3
+		download_url="$main_url/$book_no$book$no_of_chapters/${book}${chapter}.mp3"
+	fi
+	echo "Now fetching audio book from $download_url"
+	echo "downloading from $download_url"
+	if ! [[ -f $book_to_download ]]; then
+		wget $download_url
+	else
+		echo "$book_to_download has already been downloaded!"
+	fi
+	let counter=counter+1
+done
 popd
 echo "Done!"
