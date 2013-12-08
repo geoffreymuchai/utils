@@ -1,0 +1,14 @@
+#! /bin/bash
+
+echo "Installing apache and other dependecies..."
+sudo aptitude install apache2 apache2.2-common apache2-mpm-prefork apache2-utils libexpat1 ssl-cert
+echo "Installed Apache."
+
+echo "Installing mod_wsgi for Apache..."
+sudo aptitude install libapache2-mod-wsgi
+echo "Installed libapache-mod-wsgi."
+
+echo "Restarting server..."
+sudo service apache2 restart
+echo "Restarted Apache."
+
