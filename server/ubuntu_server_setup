@@ -1,6 +1,9 @@
 #! /bin/bash
 
 echo "[Initial Server Setup]"
-echo "Installing the following tools: vim"
+echo "Installing the following tools: vim, python-pip"
 
-sudo apt-get install vim
+sudo apt-get install vim, python-pip
+
+echo "[Django setup] Installing django"
+pip install --upgrade Django
